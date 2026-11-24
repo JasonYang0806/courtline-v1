@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Courtline V1 — Youth Sports Tournament Schedule from Your Inbox</title>
+  <meta name="description" content="Forward youth sports tournament emails and get one clean schedule page per kid with every match, draw, fee, deadline, and automatic draw or time-change alerts." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f6f4ee;
+      --bg-subtle: #efece3;
+      --surface: #ffffff;
+      --surface-tint: #fbfaf7;
+      --ink: #18201c;
+      --ink-secondary: #4c5751;
+      --ink-muted: #6e7872;
+      --border: #e3ded3;
+      --border-strong: #cfc8b8;
+      --pine: #1b4d36;
+      --pine-hover: #143b29;
+      --pine-soft: #e9f2ec;
+      --clay: #b94824;
+      --clay-soft: #fcf0eb;
+      --clay-border: #efc8b9;
+      --amber: #9b6114;
+      --amber-soft: #fbf4e6;
+      --slate-soft: #eef0ee;
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --shadow-sm: 0 1px 2px rgba(24, 32, 28, 0.05), 0 1px 1px rgba(24, 32, 28, 0.03);
+      --shadow-md: 0 6px 20px rgba(24, 32, 28, 0.06), 0 1px 3px rgba(24, 32, 28, 0.04);
+      --container: 1080px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink);
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(27, 77, 54, 0.035) 1px, transparent 0);
+      background-size: 28px 28px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea, select { font-family: inherit; font-size: inherit; }
+    button { cursor: pointer; }
+    .container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+    .mono { font-family: var(--font-mono); }
+
+    /* Header */
+    .site-header {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(246, 244, 238, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; background: none; border: none; padding: 0; }
+    .brand-mark { width: 24px; height: 24px; border-radius: 50%; background: var(--pine); position: relative; display: inline-block; flex-shrink: 0; }
+    .brand-mark::after { content: ''; position: absolute; inset: 4px; border: 1.5px solid #e7efe9; border-radius: 50%; clip-path: polygon(0 0, 100% 0, 100% 44%, 0 64%); }
+    .brand-name { font-family: var(--font-display); font-weight: 600; font-size: 20px; letter-spacing: -0.02em; color: var(--ink); }
+    .brand-tag { font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--ink-muted); padding: 2px 6px; border: 1px solid var(--border-strong); border-radius: 4px; }
+    .main-nav { display: flex; align-items: center; gap: 6px; }
+    .nav-link {
+      display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: var(--radius-sm);
+      border: none; background: transparent; font-size: 14px; font-weight: 500; color: var(--ink-secondary);
+      transition: background-color 140ms ease, color 140ms ease;
+    }
+    .nav-link:hover { background: var(--bg-subtle); color: var(--ink); }
+    .nav-link.is-active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+    .nav-link-cta { background: var(--pine); color: #ffffff; }
+    .nav-link-cta:hover, .nav-link-cta.is-active { background: var(--pine-hover); color: #ffffff; }
+    .nav-alert-count {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500; background: var(--clay); color: #ffffff;
+      min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+    }
+
+    .app-main { flex: 1; padding: 36px 0 64px; }
+    .site-footer { border-top: 1px solid var(--border); background: var(--surface-tint); padding: 22px 0; font-size: 13px; color: var(--ink-muted); }
+    .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+    .footer-note { margin: 0; }
+    .footer-note strong { color: var(--ink); font-weight: 600; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px;
+      border-radius: var(--radius-sm); border: 1px solid transparent; font-size: 14px; font-weight: 600; line-height: 1.2;
+      transition: background-color 140ms ease, border-color 140ms ease, transform 120ms ease;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--pine); color: #ffffff; }
+    .btn-primary:hover { background: var(--pine-hover); }
+    .btn-secondary { background: var(--surface); color: var(--ink); border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
+    .btn-secondary:hover { background: var(--surface-tint); border-color: var(--ink-muted); }
+    .btn-ghost { background: transparent; color: var(--ink-secondary); border-color: transparent; padding: 7px 11px; font-weight: 500; }
+    .btn-ghost:hover { background: var(--bg-subtle); color: var(--ink); }
+    .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+    /* Landing */
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr); gap: 44px; align-items: start; padding-top: 12px; }
+    .hero-kicker { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pine); margin: 0 0 14px; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(34px, 4.4vw, 50px); font-weight: 500; line-height: 1.09; letter-spacing: -0.028em; margin: 0 0 18px; }
+    .hero-subtitle { font-size: 16.5px; line-height: 1.62; color: var(--ink-secondary); margin: 0 0 26px; max-width: 540px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+    .hero-principles { display: flex; flex-wrap: wrap; gap: 10px 22px; padding-top: 18px; border-top: 1px solid var(--border); font-size: 13px; color: var(--ink-muted); }
+    .hero-principles span { display: inline-flex; align-items: center; gap: 7px; }
+    .hero-principles span::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--pine); opacity: 0.65; }
+
+    .dispatch-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; }
+    .dispatch-top { padding: 14px 18px; background: var(--surface-tint); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .dispatch-label { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .dispatch-address { font-family: var(--font-mono); font-size: 12px; color: var(--pine); font-weight: 500; }
+    .dispatch-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .dispatch-email-excerpt { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 13px 15px; font-size: 13px; color: var(--ink-secondary); }
+    .dispatch-email-subject { font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .dispatch-arrow { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-muted); }
+    .dispatch-arrow::before, .dispatch-arrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .dispatch-extracted { border: 1px solid var(--clay-border); background: var(--clay-soft); border-radius: var(--radius-md); padding: 13px 15px; }
+    .dispatch-alert-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--clay); margin-bottom: 5px; }
+    .dispatch-diff { font-size: 13.5px; margin: 0 0 8px; }
+    .dispatch-diff s { color: var(--ink-muted); }
+    .dispatch-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; padding-top: 10px; border-top: 1px solid rgba(185, 72, 36, 0.16); font-size: 12.5px; margin: 0; }
+    .dispatch-fields dt { color: var(--ink-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .dispatch-fields dd { margin: 1px 0 0; font-weight: 600; }
+
+    .section-rule { margin-top: 52px; padding-top: 34px; border-top: 1px solid var(--border); }
+    .section-heading { font-family: var(--font-display); font-size: 24px; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 22px; }
+    .steps-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+    .step-item { border-top: 2px solid var(--border-strong); padding-top: 16px; }
+    .step-num { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--pine); margin-bottom: 8px; }
+    .step-title { font-size: 16px; font-weight: 700; margin: 0 0 6px; }
+    .step-desc { font-size: 14px; color: var(--ink-secondary); margin: 0; }
+
+    .create-kid-band {
+      margin-top: 48px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 26px 28px; box-shadow: var(--shadow-sm); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 28px; align-items: center;
+    }
+    .create-kid-band h2 { font-family: var(--font-display); font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 6px; }
+    .create-kid-band p { margin: 0; font-size: 14px; color: var(--ink-secondary); }
+    .inline-kid-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; }
+    .existing-kids-list { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .kid-chip-link {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500;
+    }
+    .kid-chip-link:hover { border-color: var(--pine); background: var(--pine-soft); }
+
+    /* Forms */
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 12.5px; font-weight: 600; color: var(--ink-secondary); }
+    .input, .textarea, .select {
+      width: 100%; padding: 9px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong);
+      background: var(--surface); color: var(--ink); font-size: 14px;
+    }
+    .input:focus, .textarea:focus, .select:focus { outline: none; border-color: var(--pine); box-shadow: 0 0 0 3px rgba(27, 77, 54, 0.12); }
+    .textarea { resize: vertical; min-height: 150px; line-height: 1.5; }
+
+    /* Schedule Page */
+    .page-header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
+    .page-eyebrow { font-family: var(--font-mono); font-size: 12px; color: var(--pine); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 6px; }
+    .page-title { font-family: var(--font-display); font-size: clamp(28px, 3.6vw, 38px); font-weight: 500; letter-spacing: -0.025em; line-height: 1.12; margin: 0 0 8px; }
+    .page-meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; font-size: 14px; color: var(--ink-secondary); }
+    .division-tag { font-weight: 600; color: var(--ink); }
+    .inbox-copy-chip {
+      display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 999px;
+      border: 1px solid var(--border-strong); background: var(--surface); font-family: var(--font-mono); font-size: 12px; color: var(--pine);
+    }
+    .inbox-copy-chip:hover { background: var(--pine-soft); border-color: var(--pine); }
+    .page-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+    .summary-strip {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius-md); margin: 22px 0 26px; box-shadow: var(--shadow-sm);
+    }
+    .summary-cell { padding: 16px 20px; border-right: 1px solid var(--border); }
+    .summary-cell:last-child { border-right: none; }
+    .summary-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-bottom: 4px; }
+    .summary-value { font-family: var(--font-display); font-size: 26px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; }
+    .summary-sub { font-size: 12.5px; color: var(--ink-muted); margin-top: 3px; }
+
+    /* Alerts */
+    .alerts-section { background: var(--clay-soft); border: 1px solid var(--clay-border); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 26px; }
+    .alerts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .alerts-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--clay); margin: 0; }
+    .alerts-list { display: flex; flex-direction: column; gap: 10px; }
+    .alert-row {
+      background: var(--surface); border: 1px solid rgba(185, 72, 36, 0.22); border-radius: var(--radius-md);
+      padding: 13px 15px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    }
+    .alert-row.is-read { opacity: 0.68; border-color: var(--border); }
+    .alert-type-pill { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; margin-right: 8px; }
+    .alert-type-draw_posted { background: var(--pine-soft); color: var(--pine); }
+    .alert-type-time_changed, .alert-type-venue_changed { background: var(--clay-soft); color: var(--clay); }
+    .alert-type-withdrawal { background: var(--slate-soft); color: var(--ink-secondary); }
+    .alert-type-deadline_added { background: var(--amber-soft); color: var(--amber); }
+    .alert-heading { font-size: 14.5px; font-weight: 600; margin: 0 0 4px; }
+    .alert-msg { font-size: 13.5px; color: var(--ink-secondary); margin: 0; }
+    .alert-diff-line { margin-top: 6px; font-family: var(--font-mono); font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .diff-old { text-decoration: line-through; color: var(--ink-muted); }
+    .diff-new { font-weight: 500; color: var(--pine); }
+
+    /* Filters & Events */
+    .schedule-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+    .filter-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .filter-pill { padding: 6px 13px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink-secondary); font-size: 13px; font-weight: 500; }
+    .filter-pill.is-active { background: var(--ink); border-color: var(--ink); color: #ffffff; }
+    .toggle-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-secondary); cursor: pointer; }
+    .toggle-label input { accent-color: var(--pine); width: 15px; height: 15px; }
+
+    .events-stack { display: flex; flex-direction: column; gap: 16px; }
+    .event-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+    .event-card.is-withdrawn { background: var(--surface-tint); border-style: dashed; border-color: var(--border-strong); }
+    .event-card-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .event-league { font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--pine); margin-bottom: 4px; }
+    .event-title { font-family: var(--font-display); font-size: 21px; font-weight: 500; letter-spacing: -0.018em; line-height: 1.25; margin: 0; }
+    .event-card.is-withdrawn .event-title { color: var(--ink-secondary); }
+
+    .status-badge { display: inline-flex; align-items: center; padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .status-draw_posted, .status-scheduled { background: var(--pine-soft); color: var(--pine); }
+    .status-awaiting_schedule { background: var(--amber-soft); color: var(--amber); }
+    .status-registered { background: var(--bg-subtle); color: var(--ink-secondary); }
+    .status-withdrawn { background: var(--slate-soft); color: var(--ink-secondary); border: 1px solid var(--border-strong); }
+
+    .event-callout { padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13.5px; margin-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+    .callout-withdrawn { background: var(--slate-soft); border-left: 3px solid var(--ink-muted); }
+    .callout-pending { background: var(--amber-soft); color: #6b420b; border-left: 3px solid var(--amber); }
+    .callout-draw { background: var(--pine-soft); color: var(--pine); border-left: 3px solid var(--pine); }
+
+    .facts-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 22px; padding: 14px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .fact-label { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-bottom: 3px; }
+    .fact-value { font-size: 14.5px; font-weight: 600; }
+    .fact-value.is-muted { font-weight: 500; color: var(--ink-muted); }
+    .fact-sub { font-size: 12.5px; color: var(--ink-secondary); margin-top: 3px; }
+    .fact-sub.is-change { color: var(--clay); font-weight: 500; }
+    .fact-sub.is-app-note { color: var(--amber); font-weight: 500; }
+
+    .event-footer { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+    .event-latest-note { font-size: 13px; color: var(--ink-secondary); margin: 0; }
+    .event-drawer { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .timeline-list { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .timeline-item { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: 12px; font-size: 13px; }
+    .timeline-date { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+    .source-email-item { border-top: 1px solid var(--border); padding: 10px 0; }
+    .source-email-meta { font-size: 12.5px; color: var(--ink-muted); margin-bottom: 4px; }
+    .source-email-subject { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+    .source-email-body { margin: 0; white-space: pre-wrap; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: var(--ink-secondary); background: var(--bg); padding: 10px 12px; border-radius: var(--radius-sm); }
+
+    /* Inbox Page */
+    .inbox-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 28px; margin-top: 24px; align-items: start; }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+    .panel-title { font-family: var(--font-display); font-size: 20px; font-weight: 500; letter-spacing: -0.015em; margin: 0 0 6px; }
+    .panel-sub { font-size: 13.5px; color: var(--ink-secondary); margin: 0 0 18px; }
+    .forward-address-box { background: var(--pine-soft); border: 1px solid rgba(27, 77, 54, 0.22); border-radius: var(--radius-md); padding: 14px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    .forward-address-value { font-family: var(--font-mono); font-size: 15px; font-weight: 500; color: var(--pine); word-break: break-all; }
+    .sample-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 18px; }
+    .sample-btn { text-align: left; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface-tint); }
+    .sample-btn:hover { border-color: var(--pine); background: var(--pine-soft); }
+    .sample-btn-title { display: block; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .sample-btn-desc { display: block; font-size: 12px; color: var(--ink-muted); line-height: 1.35; }
+    .mode-tabs { display: inline-flex; background: var(--bg-subtle); padding: 3px; border-radius: var(--radius-sm); margin-bottom: 14px; }
+    .mode-tab { border: none; background: transparent; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--ink-secondary); }
+    .mode-tab.is-active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+    .form-stack { display: flex; flex-direction: column; gap: 13px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .extraction-result { margin-top: 20px; border: 1px solid rgba(27, 77, 54, 0.28); background: var(--pine-soft); border-radius: var(--radius-md); padding: 16px 18px; }
+    .json-preview { margin: 10px 0 0; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 12px; line-height: 1.5; overflow-x: auto; }
+    .history-item { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 14px; background: var(--surface-tint); margin-bottom: 10px; }
+    .history-item summary { cursor: pointer; list-style: none; }
+    .history-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 3px; }
+    .history-subject { font-size: 13.5px; font-weight: 600; }
+    .history-date { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-muted); white-space: nowrap; }
+    .history-from { font-size: 12px; color: var(--ink-muted); }
+
+    .toast-region { position: fixed; bottom: 22px; right: 22px; z-index: 60; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { background: var(--ink); color: #ffffff; padding: 10px 16px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 500; box-shadow: var(--shadow-md); }
+
+    @media (max-width: 900px) {
+      .hero-grid, .create-kid-band, .inbox-layout, .steps-grid { grid-template-columns: 1fr; }
+      .summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-cell:nth-child(2) { border-right: none; }
+      .summary-cell:nth-child(1), .summary-cell:nth-child(2) { border-bottom: 1px solid var(--border); }
+      .facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .container { padding: 0 16px; }
+      .header-inner { height: auto; padding: 12px 0; flex-direction: column; align-items: flex-start; }
+      .inline-kid-form, .form-row-2, .sample-grid, .facts-grid, .timeline-item { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <button type="button" class="brand" id="nav-brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">Courtline</span>
+        <span class="brand-tag">V1</span>
+      </button>
+      <nav class="main-nav" aria-label="Primary navigation">
+        <button type="button" class="nav-link" id="nav-landing">Overview</button>
+        <button type="button" class="nav-link" id="nav-schedule">
+          <span>Mia Yang’s Schedule</span>
+          <span class="nav-alert-count" id="nav-alert-count" hidden>0</span>
+        </button>
+        <button type="button" class="nav-link nav-link-cta" id="nav-inbox">Forward Email</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="app-root" class="app-main"></main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-note"><strong>Courtline</strong> — Email is the integration. No accounts, no app installs, no USTA/UTR login scraping.</p>
+      <a class="mono" style="font-size:12px;text-decoration:underline" href="https://github.com/JasonYang0806/courtline-v1" target="_blank" rel="noopener">GitHub Repo (Node + SQLite + LLM backend)</a>
+    </div>
+  </footer>
+
+  <div id="toast-region" class="toast-region" role="status" aria-live="polite"></div>
+
+  <script>
+    const INBOX_DOMAIN = 'inbox.courtline.app';
+
+    const SAMPLE_FORWARD_EMAILS = [
+      {
+        id: 'utr-sunny-draw',
+        label: 'Draw Posted: UTR Sunny Youngs Match #1',
+        description: 'Publishes first match time & venue for Mia’s pending UTR Sunny Youngs session and fires a Draw Posted alert.',
+        from_address: 'notifications@universaltennis.com',
+        subject: 'Fwd: Draw Posted — UTR Sunny Youngs (Beginner Teams) Match #1',
+        received_at: '2026-11-23T18:15:00-08:00',
+        body: `Hello Mia Yang's family,\n\nThe match schedule is now live for UTR Sunny Youngs!\n\nEvent: UTR Sunny Youngs\nDivision: Beginner Teams\nMatch Date: Sun Nov 29, 2026\nMatch Time: 10:30 AM\nVenue: Cupertino Sports Center\nFormat: Short sets to 4, no-ad scoring\nCheck-in Deadline: Nov 29, 2026 at 10:15 AM\n\nPlease arrive 15 minutes early for team warm-ups.\n— Universal Tennis (UTR)`
+      },
+      {
+        id: 'utr-sunny-time-change',
+        label: 'Time Change: UTR Sunny Youngs moved to 1:15 PM',
+        description: 'Moves Match #1 from 10:30 AM to 1:15 PM and triggers a Time Change alert with before → after diff.',
+        from_address: 'director@sunnyyoungstennis.org',
+        subject: 'Fwd: TIME CHANGE — UTR Sunny Youngs Sunday Match',
+        received_at: '2026-11-28T16:40:00-08:00',
+        body: `Hi Beginner Teams parents,\n\nQuick schedule update for UTR Sunny Youngs tomorrow (Sun Nov 29, 2026) at Cupertino Sports Center:\nDue to morning court resurfacing, Match #1 has been moved from 10:30 AM to 1:15 PM.\n\nNew Match Time: 1:15 PM\nVenue: Cupertino Sports Center\n\nThanks for rolling with the change!\n— Sunny Youngs Captain`
+      },
+      {
+        id: 'battl-4320-schedule',
+        label: 'Schedule + Deadline: Bay Area Tennis Team Leagues Session 4320',
+        description: 'Adds Saturday kickoff date, venue, and roster lineup deadline to Session 4320.',
+        from_address: 'leagues@bayareatennisteamleagues.com',
+        subject: 'Fwd: Schedule Posted — Bay Area Tennis Team Leagues, Session 4320',
+        received_at: '2026-11-24T11:05:00-08:00',
+        body: `Welcome to Bay Area Tennis Team Leagues, Session 4320!\n\nYour Session 4320 match schedule has been posted:\nEvent: Bay Area Tennis Team Leagues, Session 4320\nDivision: 10U Green Team League\nMatch Date: Sat Dec 5, 2026\nMatch Time: 9:00 AM\nVenue: Cuesta Park Tennis Courts, Mountain View\nLineup Deadline: Dec 3, 2026 by 8:00 PM\n\nSee you on the courts!`
+      },
+      {
+        id: 'usta-new-event',
+        label: 'New Registration: USTA NorCal Winter Level 6',
+        description: 'Adds a brand-new USTA tournament with entry fee, division, venue, and withdrawal deadline.',
+        from_address: 'no-reply@playtennis.usta.com',
+        subject: 'Fwd: Registration Confirmed — USTA NorCal Winter Level 6 Open',
+        received_at: '2026-11-25T14:20:00-08:00',
+        body: `Registration Confirmed for Mia Yang\n\nTournament: USTA NorCal Winter Level 6 Open\nDivision: Girls' 10 & under Green\nDate: Sat Dec 12, 2026\nVenue: Taube Family Tennis Stadium, Stanford\nEntry Fee: $68.00 paid Nov 25, 2026\nFormat: Two short sets to 4, 7-point tiebreak at 4-all\nWithdraw Deadline: Dec 7, 2026 at 5:59 PM\n\nMatch times will be posted 48 hours before play. Match time only in the USTA app.`
+      }
+    ];
+
+    function esc(str) {
+      return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function slugify(input) { return String(input || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'player'; }
+    function formatMoney(amount) { return typeof amount === 'number' && !Number.isNaN(amount) ? `$${amount.toFixed(2)}` : '—'; }
+    function formatTimestamp(iso) {
+      if (!iso) return '';
+      const dt = new Date(iso);
+      return Number.isNaN(dt.getTime()) ? iso : dt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    }
+    function statusLabel(s) {
+      return { draw_posted: 'Draw Posted', scheduled: 'Scheduled', awaiting_schedule: 'Awaiting Schedule', registered: 'Registered · Paid', withdrawn: 'Withdrawn · Sick', completed: 'Completed' }[s] || s;
+    }
+    function alertTypeLabel(t) {
+      return { draw_posted: 'Draw Posted', time_changed: 'Time Change', venue_changed: 'Venue Moved', withdrawal: 'Withdrawal', deadline_added: 'Deadline' }[t] || 'Update';
+    }
+    function showToast(msg) {
+      const region = document.getElementById('toast-region');
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.textContent = msg;
+      region.appendChild(el);
+      setTimeout(() => el.remove(), 2600);
+    }
+    async function copyText(text, label) {
+      try { await navigator.clipboard.writeText(text); showToast(label || 'Copied'); } catch { showToast(text); }
+    }
+
+    const MONTHS = { jan:1,january:1,feb:2,february:2,mar:3,march:3,apr:4,april:4,may:5,jun:6,june:6,jul:7,july:7,aug:8,august:8,sep:9,sept:9,september:9,oct:10,october:10,nov:11,november:11,dec:12,december:12 };
+    function formatIsoToNiceDate(iso) {
+      if (!iso) return null;
+      const [y, m, d] = iso.split('-').map(Number);
+      return new Date(Date.UTC(y, m - 1, d, 12, 0, 0)).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+    }
+    function parseHumanDate(text) {
+      if (!text) return null;
+      const iso = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+      if (iso) return { iso: iso[1], label: formatIsoToNiceDate(iso[1]) };
+      const m = text.match(/\b(?:(?:Mon|Tue|Tues|Wed|Thu|Thur|Thurs|Fri|Sat|Sun)[a-z]*,?\s+)?(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t|tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?,?\s*(20\d{2})\b/i);
+      if (m) {
+        const isoDate = `${Number(m[3])}-${String(MONTHS[m[1].toLowerCase()]).padStart(2, '0')}-${String(Number(m[2])).padStart(2, '0')}`;
+        return { iso: isoDate, label: formatIsoToNiceDate(isoDate) };
+      }
+      return null;
+    }
+    function parseRawEml(rawEml) {
+      const norm = String(rawEml || '').replace(/\r\n/g, '\n');
+      const idx = norm.indexOf('\n\n');
+      const head = idx === -1 ? norm : norm.slice(0, idx);
+      const body = idx === -1 ? '' : norm.slice(idx + 2).trim();
+      const headers = {};
+      let lastKey = null;
+      for (const line of head.split('\n')) {
+        if (/^\s+/.test(line) && lastKey) headers[lastKey] += ' ' + line.trim();
+        else { const m = line.match(/^([A-Za-z0-9-]+):\s*(.*)$/); if (m) { lastKey = m[1].toLowerCase(); headers[lastKey] = m[2].trim(); } }
+      }
+      let receivedAt = new Date().toISOString();
+      if (headers.date) { const p = Date.parse(headers.date); if (!Number.isNaN(p)) receivedAt = new Date(p).toISOString(); }
+      return { from_address: headers.from || 'forwarded@parent.mail', subject: headers.subject || '(Forwarded Email)', received_at: receivedAt, body: body || norm };
+    }
+    function extractLabeledLine(body, labels) {
+      const m = body.match(new RegExp(`^(?:${labels.join('|')})\\s*:\\s*(.+)$`, 'im'));
+      return m ? m[1].trim() : null;
+    }
+    function detectSourceLeague(from, subject, body) {
+      const c = `${from}\n${subject}\n${body}`;
+      if (/bay area tennis team leagues?/i.test(c) || /battl/i.test(c)) return 'Bay Area Tennis Team Leagues';
+      if (/\bUTR\b|universal tennis|universaltennis\.com/i.test(c)) return 'UTR';
+      if (/\bUSTA\b|playtennis\.usta\.com|norcal/i.test(c)) return 'USTA';
+      return 'Tournament Email';
+    }
+    function matchExistingEvent(subject, body, existingEvents) {
+      const haystack = `${subject}\n${body}`.toLowerCase();
+      let best = null, bestScore = 0;
+      const stop = new Set(['usta','utr','tennis','team','teams','junior','level','session','league','leagues','bay','area','match','event']);
+      for (const ev of existingEvents) {
+        const name = ev.event_name.toLowerCase();
+        if (haystack.includes(name)) return ev;
+        const sm = name.match(/session\s+(\d+)/i);
+        if (sm && haystack.includes(sm[1])) return ev;
+        const tokens = name.split(/[^a-z0-9]+/).filter((t) => t.length >= 4 && !stop.has(t));
+        if (!tokens.length) continue;
+        const hits = tokens.filter((t) => haystack.includes(t)).length;
+        const ratio = hits / tokens.length;
+        if (hits >= 2 || (tokens.length === 1 && hits === 1) || (hits >= 1 && ratio >= 0.6)) {
+          if (ratio > bestScore) { bestScore = ratio; best = ev; }
+        }
+      }
+      return best;
+    }
+    function localParseEmail({ from_address = '', subject = '', body = '' }, existingEvents = []) {
+      const combined = `${subject}\n${body}`;
+      const league = detectSourceLeague(from_address, subject, body);
+      const matched = matchExistingEvent(subject, body, existingEvents);
+      let eventName = matched ? matched.event_name : null;
+      if (!eventName) {
+        const labeled = body.match(/^(?:Tournament|Event|League|Program)\s*:\s*(.+)$/im);
+        if (labeled) eventName = labeled[1].trim().replace(/[.\s]+$/, '');
+      }
+      if (!eventName) {
+        const clean = subject.replace(/^(?:\s*(?:fwd?|re)\s*:\s*)+/i, '').replace(/^(?:update|alert|notice|draw posted|schedule posted|time change|venue change|registration confirmed|payment receipt)\s*[-–:|]\s*/i, '').replace(/\s*[-–|]\s*(?:registration confirmed|receipt|draw posted|schedule update|time change|match \d+).*$/i, '').trim();
+        eventName = clean.length >= 4 ? clean : `${league} Event`;
+      }
+      let division = extractLabeledLine(body, ['Division','Flight','Bracket','Group']);
+      if (!division) {
+        const dm = combined.match(/\b(Girls'? \d+\s*(?:&|and)\s*under(?:\s+[A-Za-z]+)?|Boys'? \d+\s*(?:&|and)\s*under(?:\s+[A-Za-z]+)?|10(?:U|-and-under)\s*(?:Green|Orange|Red)(?:\s+division)?|Beginner Teams|Pearl Teams|Session\s+\d+)\b/i);
+        if (dm) division = dm[1].trim();
+      }
+      if (!division && matched?.division) division = matched.division;
+      let feeAmount = null, feeLabel = null, feePaidDate = null;
+      const feeSource = extractLabeledLine(body, ['Entry Fee','Fee','Total Paid','Amount Paid','Payment','Total']) || combined;
+      const dollar = feeSource.match(/\$\s*(\d+(?:\.\d{2})?)/);
+      if (dollar) {
+        feeAmount = Number(dollar[1]);
+        const pdm = feeSource.match(/paid\s+(?:on\s+)?([A-Za-z]+\s+\d{1,2},?\s+20\d{2}|20\d{2}-\d{2}-\d{2})/i);
+        if (pdm) { const p = parseHumanDate(pdm[1]); if (p) feePaidDate = p.iso; feeLabel = `$${feeAmount.toFixed(2)} paid ${p ? p.label.replace(/^[A-Za-z]+,\s*/, '') : pdm[1]}`; }
+        else feeLabel = /paid|receipt/i.test(combined) ? `$${feeAmount.toFixed(2)} paid` : `$${feeAmount.toFixed(2)} entry`;
+      }
+      let venue = extractLabeledLine(body, ['New Venue','Updated Venue','Venue','Location','Site','Courts']);
+      let previousVenue = extractLabeledLine(body, ['Previous Venue','Old Venue','Moved From']);
+      let venueNote = null;
+      const moved = combined.match(/(?:venue|location|site|matches?)\s+(?:has been\s+|was\s+)?moved\s+from\s+([^.\n,]+?)\s+to\s+([^.\n,]+)/i);
+      if (moved) { previousVenue = previousVenue || moved[1].trim(); venue = venue || moved[2].trim(); venueNote = `Moved from ${previousVenue} to ${venue}`; }
+      let format = extractLabeledLine(body, ['Format','Match Format','Scoring Format']);
+      if (!format) { const fm = combined.match(/\b(up to \d+,?\s*no-?ad|short sets? to \d+[^.\n]*|best of 3[^.\n]*)\b/i); if (fm) format = fm[1].trim(); }
+      const dlLine = extractLabeledLine(body, ['Deadline','Registration Deadline','Check-in Deadline','Lineup Deadline','Withdraw Deadline']);
+      const deadlineDate = dlLine ? (parseHumanDate(dlLine)?.iso || null) : null;
+      const deadlineLabel = dlLine || null;
+      let eventDate = null, dateLabel = null;
+      const dateLine = extractLabeledLine(body, ['Match Date','Event Date','Date','Session Start','Start Date']);
+      if (dateLine) { const p = parseHumanDate(dateLine); eventDate = p?.iso || null; dateLabel = p?.label || dateLine; }
+      else { const p = parseHumanDate(body.replace(/^.*(?:deadline|paid).*$/gim, '')) || parseHumanDate(subject); if (p) { eventDate = p.iso; dateLabel = p.label; } }
+      let matchTime = extractLabeledLine(body, ['New Match Time','Updated Time','New Time','Match Time','First Match','Start Time','Time']);
+      let matchTimeNote = null;
+      if (/match time(?:s)?\s+(?:are\s+)?only\s+(?:available\s+)?in\s+the\s+usta\s+app/i.test(combined)) matchTimeNote = 'Match time only in the USTA app';
+      if (/no\s+match\s+schedule\s+(?:has been\s+)?published\s+yet/i.test(combined)) matchTimeNote = 'No match schedule published yet';
+      const movedTime = combined.match(/(?:moved|rescheduled|changed|pushed|delayed)\s+(?:from\s+(\d{1,2}:\d{2}\s*(?:am|pm))\s+)?to\s+(\d{1,2}:\d{2}\s*(?:am|pm))/i);
+      if (movedTime && !matchTime) matchTime = movedTime[2].toUpperCase();
+
+      const isWithdrawal = /\b(withdrew|withdrawn|withdrawal\s+confirm)\b/i.test(combined);
+      const isDrawPosted = /\b(draw(?:s)?\s+(?:is|are|have been)?\s*posted|schedule\s+(?:is\s+)?(?:now\s+)?(?:live|published|posted)|match\s+#?1\s+scheduled)\b/i.test(combined);
+      const isTimeChange = Boolean(movedTime) || /\b(time\s+change|rescheduled|wet\s+courts|rain\s+delay|courts?\s+(?:have\s+)?dried|new\s+(?:match\s+)?time)\b/i.test(combined);
+      const isVenueChange = Boolean(previousVenue) || /\b(venue\s+(?:change|moved)|moved\s+from)\b/i.test(combined);
+      const isAwaiting = /no\s+match\s+schedule\s+(?:has been\s+)?published\s+yet/i.test(combined);
+
+      let status = 'registered', drawPublished = false, changeType = 'new_event', withdrawalReason = null, updateSummary = '';
+      if (isWithdrawal) { status = 'withdrawn'; changeType = 'withdrawal'; withdrawalReason = 'Withdrawn — not a played match'; updateSummary = `${eventName}: marked as withdrawal (not a played match).`; }
+      else if (isVenueChange) { status = matched?.status || 'scheduled'; drawPublished = Boolean(matched?.draw_published); changeType = 'venue_changed'; updateSummary = previousVenue && venue ? `Venue moved from ${previousVenue} to ${venue}.` : `Venue updated to ${venue}.`; }
+      else if (isTimeChange) { status = matched?.status === 'awaiting_schedule' ? 'draw_posted' : (matched?.status || 'scheduled'); drawPublished = Boolean(matched?.draw_published || matchTime); changeType = 'time_changed'; updateSummary = movedTime && movedTime[1] ? `Match time changed from ${movedTime[1].toUpperCase()} to ${movedTime[2].toUpperCase()}.` : `Match time updated to ${matchTime || 'new time'}.`; }
+      else if (isDrawPosted) { status = 'draw_posted'; drawPublished = true; changeType = 'draw_posted'; updateSummary = `Draw / match schedule posted: ${[dateLabel, matchTime ? `at ${matchTime}` : null, venue].filter(Boolean).join(' · ')}.`; }
+      else if (isAwaiting) { status = 'awaiting_schedule'; drawPublished = false; updateSummary = `${eventName} registered — no match schedule published yet.`; }
+      else { status = matchTime ? 'scheduled' : 'registered'; drawPublished = Boolean(matchTime); updateSummary = `${eventName}${dateLabel ? ` on ${dateLabel}` : ''}${venue ? ` at ${venue}` : ''}.`; }
+
+      return { event_name: eventName, source_league: league, division, event_date: eventDate, date_label: dateLabel, match_time: matchTime, match_time_note: matchTimeNote, venue, previous_venue: previousVenue, venue_note: venueNote, fee_amount: feeAmount, fee_label: feeLabel, fee_paid_date: feePaidDate, format, deadline_date: deadlineDate, deadline_label: deadlineLabel, status, withdrawal_reason: withdrawalReason, draw_published: drawPublished, change_type: changeType, update_summary: updateSummary };
+    }
+
+    function ingestIntoStore(s, kid, emailInput, options = {}) {
+      const from_address = String(emailInput.from_address || 'forwarded@parent.mail').trim();
+      const subject = String(emailInput.subject || '(No subject)').trim();
+      const body = String(emailInput.body || '').trim();
+      const received_at = emailInput.received_at || new Date().toISOString();
+      const now = options.timestamp || received_at;
+      const existingEvents = s.events.filter((e) => e.kid_id === kid.id);
+      const extracted = options.preExtracted || localParseEmail({ from_address, subject, body, received_at }, existingEvents);
+      const provider = options.provider || 'local-parser';
+      const targetName = (extracted.event_name || '').toLowerCase().trim();
+      const matched = existingEvents.find((ev) => { const n = ev.event_name.toLowerCase().trim(); return n === targetName || n.includes(targetName) || targetName.includes(n); }) || matchExistingEvent(subject, body, existingEvents);
+
+      let event, action;
+      const alertsToCreate = [];
+      if (!matched) {
+        action = 'created';
+        event = { id: s.nextIds.event++, kid_id: kid.id, ...extracted, is_played_match: extracted.status === 'completed', draw_published: Boolean(extracted.draw_published), schedule_notes: extracted.update_summary ? [{ at: now, type: extracted.change_type, text: extracted.update_summary }] : [], created_at: now, updated_at: now };
+        s.events.push(event);
+        if (extracted.draw_published || extracted.change_type === 'draw_posted') alertsToCreate.push({ alert_type: 'draw_posted', title: `Draw posted: ${extracted.event_name}`, message: extracted.update_summary, previous_value: 'No schedule', new_value: [extracted.date_label, extracted.match_time, extracted.venue].filter(Boolean).join(' · ') || 'Draw live' });
+        if (extracted.deadline_label) alertsToCreate.push({ alert_type: 'deadline_added', title: `Deadline: ${extracted.event_name}`, message: extracted.deadline_label, previous_value: null, new_value: extracted.deadline_label });
+      } else {
+        action = 'updated';
+        const prev = { ...matched };
+        if (extracted.venue && prev.venue && extracted.venue.toLowerCase() !== prev.venue.toLowerCase()) {
+          matched.previous_venue = prev.venue;
+          matched.venue_note = extracted.venue_note || `Moved from ${prev.venue}`;
+          alertsToCreate.push({ alert_type: 'venue_changed', title: `Venue changed: ${prev.event_name}`, message: extracted.update_summary || `Moved from ${prev.venue} to ${extracted.venue}.`, previous_value: prev.venue, new_value: extracted.venue });
+        }
+        const drawJustPosted = (!prev.draw_published && extracted.draw_published) || extracted.change_type === 'draw_posted';
+        if (drawJustPosted) alertsToCreate.push({ alert_type: 'draw_posted', title: `Draw posted: ${prev.event_name}`, message: extracted.update_summary || 'Match schedule is now published.', previous_value: 'No schedule published', new_value: [extracted.date_label, extracted.match_time, extracted.venue].filter(Boolean).join(' · ') || 'Published' });
+        const timeChanged = !drawJustPosted && (extracted.change_type === 'time_changed' || (extracted.match_time && prev.match_time && extracted.match_time.toLowerCase() !== prev.match_time.toLowerCase()));
+        if (timeChanged) alertsToCreate.push({ alert_type: 'time_changed', title: `Time update: ${prev.event_name}`, message: extracted.update_summary || `Match time updated to ${extracted.match_time}.`, previous_value: prev.match_time || prev.match_time_note || 'Original time', new_value: extracted.match_time || 'Updated time' });
+        if (extracted.status === 'withdrawn' && prev.status !== 'withdrawn') alertsToCreate.push({ alert_type: 'withdrawal', title: `Marked as withdrawal: ${prev.event_name}`, message: extracted.withdrawal_reason || 'Recorded as a withdrawal, not a played match.', previous_value: prev.status.replace('_', ' '), new_value: 'Withdrawn (not played)' });
+        if (extracted.deadline_label && !prev.deadline_label) alertsToCreate.push({ alert_type: 'deadline_added', title: `Deadline added: ${prev.event_name}`, message: extracted.deadline_label, previous_value: null, new_value: extracted.deadline_label });
+
+        Object.assign(matched, {
+          source_league: extracted.source_league || matched.source_league,
+          division: extracted.division || matched.division,
+          event_date: extracted.event_date || matched.event_date,
+          date_label: extracted.date_label || matched.date_label,
+          match_time: extracted.match_time || matched.match_time,
+          venue: extracted.venue || matched.venue,
+          venue_note: extracted.venue_note || matched.venue_note,
+          fee_amount: extracted.fee_amount ?? matched.fee_amount,
+          fee_label: extracted.fee_label || matched.fee_label,
+          fee_paid_date: extracted.fee_paid_date || matched.fee_paid_date,
+          format: extracted.format || matched.format,
+          deadline_date: extracted.deadline_date || matched.deadline_date,
+          deadline_label: extracted.deadline_label || matched.deadline_label,
+          withdrawal_reason: extracted.withdrawal_reason || matched.withdrawal_reason,
+          draw_published: Boolean(prev.draw_published || extracted.draw_published),
+          updated_at: now
+        });
+        if (extracted.status === 'withdrawn') matched.status = 'withdrawn';
+        else if (prev.status !== 'withdrawn') {
+          if (extracted.status === 'draw_posted' || drawJustPosted) matched.status = 'draw_posted';
+          else if (extracted.status === 'scheduled' && matched.status !== 'draw_posted') matched.status = 'scheduled';
+        }
+        matched.is_played_match = matched.status === 'withdrawn' ? false : matched.is_played_match;
+        if (matched.draw_published && matched.match_time_note && /no match schedule published yet/i.test(matched.match_time_note)) matched.match_time_note = null;
+        else if (extracted.match_time_note) matched.match_time_note = extracted.match_time_note;
+        if (extracted.update_summary) matched.schedule_notes.push({ at: now, type: extracted.change_type, text: extracted.update_summary });
+        event = matched;
+      }
+
+      const emailRow = { id: s.nextIds.email++, kid_id: kid.id, event_id: event.id, from_address, subject, received_at, body, extracted, extraction_provider: provider };
+      s.emails.push(emailRow);
+      const createdAlerts = [];
+      for (const al of alertsToCreate) {
+        const row = { id: s.nextIds.alert++, kid_id: kid.id, event_id: event.id, email_id: emailRow.id, ...al, is_read: Boolean(options.markAlertsRead), created_at: now };
+        s.alerts.push(row);
+        createdAlerts.push(row);
+      }
+      return { action, provider, extracted, event, email: emailRow, alerts: createdAlerts };
+    }
+
+    function createSeedStore() {
+      const s = { nextIds: { kid: 1, event: 1, email: 1, alert: 1 }, kids: [], events: [], emails: [], alerts: [] };
+      const mia = { id: s.nextIds.kid++, slug: 'mia-yang', name: 'Mia Yang', division: '10-and-under Green division', inbox_email: `mia-yang@${INBOX_DOMAIN}`, created_at: '2026-11-10T15:00:00-08:00' };
+      s.kids.push(mia);
+      const seed = (em, ex, opts) => ingestIntoStore(s, mia, em, { preExtracted: ex, provider: 'seeded', ...opts });
+
+      seed({ from_address: 'no-reply@playtennis.usta.com', subject: 'Fwd: Registration Confirmed — USTA Chance Through Sport Level 7 Junior Challenger', received_at: '2026-11-10T15:22:00-08:00', body: `Thank you for registering Mia Yang!\n\nTournament: USTA Chance Through Sport Level 7 Junior Challenger\nDate: Sun Nov 22, 2026\nDivision: Girls' 12 & under\nVenue: West Valley College\nEntry Fee: $75.13\nFormat: Up to 4, no-ad\n\nNote: Match time only in the USTA app.` }, { event_name: 'USTA Chance Through Sport Level 7 Junior Challenger', source_league: 'USTA', division: "Girls' 12 & under", event_date: '2026-11-22', date_label: 'Sun Nov 22, 2026', match_time: null, match_time_note: 'Match time only in the USTA app', venue: 'West Valley College', previous_venue: null, venue_note: null, fee_amount: 75.13, fee_label: '$75.13 entry', fee_paid_date: '2026-11-10', format: 'Up to 4, no-ad', deadline_date: null, deadline_label: null, status: 'scheduled', withdrawal_reason: null, draw_published: true, change_type: 'new_event', update_summary: 'Registered in Girls’ 12 & under ($75.13 entry, format up to 4, no-ad). Match time only in the USTA app.' }, { markAlertsRead: true, timestamp: '2026-11-10T15:22:00-08:00' });
+
+      seed({ from_address: 'director@chancethroughsport.org', subject: 'Fwd: VENUE MOVE for tomorrow — Chance Through Sport Level 7 Junior Challenger', received_at: '2026-11-21T19:42:00-08:00', body: `Important site change for tomorrow's USTA Chance Through Sport Level 7 Junior Challenger (Sun Nov 22, 2026):\nThe venue has been moved from West Valley College to Mission College Santa Clara.\n\nNew Venue: Mission College Santa Clara\nPrevious Venue: West Valley College\nFormat: up to 4, no-ad. Match time only in the USTA app.` }, { event_name: 'USTA Chance Through Sport Level 7 Junior Challenger', source_league: 'USTA', division: "Girls' 12 & under", event_date: '2026-11-22', date_label: 'Sun Nov 22, 2026', match_time: null, match_time_note: 'Match time only in the USTA app', venue: 'Mission College Santa Clara', previous_venue: 'West Valley College', venue_note: 'Venue moved from West Valley College the night before', fee_amount: 75.13, fee_label: '$75.13 entry', fee_paid_date: '2026-11-10', format: 'Up to 4, no-ad', deadline_date: null, deadline_label: null, status: 'scheduled', withdrawal_reason: null, draw_published: true, change_type: 'venue_changed', update_summary: 'Venue moved from West Valley College to Mission College Santa Clara the night before.' }, { markAlertsRead: false, timestamp: '2026-11-21T19:42:00-08:00' });
+
+      seed({ from_address: 'director@chancethroughsport.org', subject: 'Fwd: Weather Delay — Wet Courts at Mission College Santa Clara', received_at: '2026-11-22T07:15:00-08:00', body: `Due to overnight rain and wet courts at Mission College Santa Clara, matches for the USTA Chance Through Sport Level 7 Junior Challenger are delayed to 2:00pm.` }, { event_name: 'USTA Chance Through Sport Level 7 Junior Challenger', source_league: 'USTA', division: "Girls' 12 & under", event_date: '2026-11-22', date_label: 'Sun Nov 22, 2026', match_time: 'Delayed to 2:00pm (wet courts)', match_time_note: 'Match time only in the USTA app', venue: 'Mission College Santa Clara', previous_venue: 'West Valley College', venue_note: 'Venue moved from West Valley College the night before', fee_amount: 75.13, fee_label: '$75.13 entry', fee_paid_date: '2026-11-10', format: 'Up to 4, no-ad', deadline_date: null, deadline_label: null, status: 'scheduled', withdrawal_reason: null, draw_published: true, change_type: 'time_changed', update_summary: 'Matches delayed by wet courts to 2:00pm.' }, { markAlertsRead: true, timestamp: '2026-11-22T07:15:00-08:00' });
+
+      seed({ from_address: 'director@chancethroughsport.org', subject: 'Fwd: UPDATE — Courts Dried, Starting On Time!', received_at: '2026-11-22T08:50:00-08:00', body: `Good news — the courts at Mission College Santa Clara dried faster than expected! Matches will start on time rather than waiting until 2:00pm. Check the USTA app for your original court time. Format: up to 4, no-ad.` }, { event_name: 'USTA Chance Through Sport Level 7 Junior Challenger', source_league: 'USTA', division: "Girls' 12 & under", event_date: '2026-11-22', date_label: 'Sun Nov 22, 2026', match_time: 'Started on time (after 2:00pm wet-court delay)', match_time_note: 'Match time only in the USTA app', venue: 'Mission College Santa Clara', previous_venue: 'West Valley College', venue_note: 'Venue moved from West Valley College the night before', fee_amount: 75.13, fee_label: '$75.13 entry', fee_paid_date: '2026-11-10', format: 'Up to 4, no-ad', deadline_date: null, deadline_label: null, status: 'scheduled', withdrawal_reason: null, draw_published: true, change_type: 'time_changed', update_summary: 'Courts dried — matches started on time after earlier wet-court delay to 2:00pm.' }, { markAlertsRead: false, timestamp: '2026-11-22T08:50:00-08:00' });
+
+      seed({ from_address: 'director@chancethroughsport.org', subject: 'Fwd: Withdrawal Confirmed — Mia Yang (Girls’ 12 & under)', received_at: '2026-11-22T09:10:00-08:00', body: `We have processed Mia Yang's withdrawal (sick) from the USTA Chance Through Sport Level 7 Junior Challenger (Girls' 12 & under). This is recorded as a withdrawal and not a played match.` }, { event_name: 'USTA Chance Through Sport Level 7 Junior Challenger', source_league: 'USTA', division: "Girls' 12 & under", event_date: '2026-11-22', date_label: 'Sun Nov 22, 2026', match_time: 'Started on time (after 2:00pm wet-court delay)', match_time_note: 'Match time only in the USTA app', venue: 'Mission College Santa Clara', previous_venue: 'West Valley College', venue_note: 'Venue moved from West Valley College the night before', fee_amount: 75.13, fee_label: '$75.13 entry', fee_paid_date: '2026-11-10', format: 'Up to 4, no-ad', deadline_date: null, deadline_label: null, status: 'withdrawn', withdrawal_reason: 'Mia withdrew sick — recorded as a withdrawal, not a played match', draw_published: true, change_type: 'withdrawal', update_summary: 'Mia withdrew sick — logged as a withdrawal, not a played match.' }, { markAlertsRead: false, timestamp: '2026-11-22T09:10:00-08:00' });
+
+      seed({ from_address: 'notifications@universaltennis.com', subject: 'Fwd: You’re in! UTR Sunny Youngs — Beginner Teams', received_at: '2026-11-13T10:05:00-08:00', body: `Welcome to UTR Sunny Youngs!\n\nPlayer: Mia Yang\nEvent: UTR Sunny Youngs\nDivision: Beginner Teams\nSession Start: Nov 13, 2026\n\nNo match schedule published yet.` }, { event_name: 'UTR Sunny Youngs', source_league: 'UTR', division: 'Beginner Teams', event_date: '2026-11-13', date_label: 'Session started Nov 13, 2026', match_time: null, match_time_note: 'No match schedule published yet', venue: null, previous_venue: null, venue_note: null, fee_amount: null, fee_label: null, fee_paid_date: null, format: null, deadline_date: null, deadline_label: null, status: 'awaiting_schedule', withdrawal_reason: null, draw_published: false, change_type: 'new_event', update_summary: 'Session started Nov 13, 2026 (Beginner Teams) — no match schedule published yet.' }, { markAlertsRead: true, timestamp: '2026-11-13T10:05:00-08:00' });
+
+      seed({ from_address: 'notifications@universaltennis.com', subject: 'Fwd: Roster Confirmed — UTR KK Phoenixes (Pearl Teams)', received_at: '2026-11-12T16:30:00-08:00', body: `Mia is confirmed on the roster for UTR KK Phoenixes.\nEvent: UTR KK Phoenixes\nDivision: Pearl Teams\nSession Start: Nov 12, 2026\n\nNo match schedule published yet.` }, { event_name: 'UTR KK Phoenixes', source_league: 'UTR', division: 'Pearl Teams', event_date: '2026-11-12', date_label: 'Session started Nov 12, 2026', match_time: null, match_time_note: 'No match schedule published yet', venue: null, previous_venue: null, venue_note: null, fee_amount: null, fee_label: null, fee_paid_date: null, format: null, deadline_date: null, deadline_label: null, status: 'awaiting_schedule', withdrawal_reason: null, draw_published: false, change_type: 'new_event', update_summary: 'Session started Nov 12, 2026 (Pearl Teams) — no match schedule published yet.' }, { markAlertsRead: true, timestamp: '2026-11-12T16:30:00-08:00' });
+
+      seed({ from_address: 'billing@bayareatennisteamleagues.com', subject: 'Fwd: Payment Receipt — Bay Area Tennis Team Leagues, Session 4320', received_at: '2026-11-20T14:18:00-08:00', body: `Payment Receipt\n\nPlayer: Mia Yang\nLeague: Bay Area Tennis Team Leagues\nEvent: Bay Area Tennis Team Leagues, Session 4320\nDivision: 10-and-under Green\nAmount Paid: $36.49 paid Nov 20, 2026` }, { event_name: 'Bay Area Tennis Team Leagues, Session 4320', source_league: 'Bay Area Tennis Team Leagues', division: 'Session 4320 · 10U Green', event_date: null, date_label: 'Paid Nov 20, 2026 · Schedule pending', match_time: null, match_time_note: 'No match schedule published yet', venue: null, previous_venue: null, venue_note: null, fee_amount: 36.49, fee_label: '$36.49 paid Nov 20, 2026', fee_paid_date: '2026-11-20', format: null, deadline_date: null, deadline_label: null, status: 'registered', withdrawal_reason: null, draw_published: false, change_type: 'payment_receipt', update_summary: 'Paid $36.49 on Nov 20, 2026 for Session 4320.' }, { markAlertsRead: true, timestamp: '2026-11-20T14:18:00-08:00' });
+
+      return s;
+    }
+
+    function getScheduleData(slug) {
+      const kid = store.kids.find((k) => k.slug === slug) || store.kids[0];
+      const rank = { draw_posted: 1, scheduled: 2, awaiting_schedule: 3, registered: 4, withdrawn: 5 };
+      const events = store.events.filter((e) => e.kid_id === kid.id).sort((a, b) => (rank[a.status] || 6) - (rank[b.status] || 6)).map((ev) => ({
+        ...ev, emails: store.emails.filter((m) => m.event_id === ev.id).sort((a, b) => b.received_at.localeCompare(a.received_at))
+      }));
+      const emails = store.emails.filter((m) => m.kid_id === kid.id).sort((a, b) => b.received_at.localeCompare(a.received_at));
+      const alerts = store.alerts.filter((a) => a.kid_id === kid.id).sort((a, b) => Number(a.is_read) - Number(b.is_read) || b.created_at.localeCompare(a.created_at));
+      const totalFees = events.reduce((acc, ev) => acc + (typeof ev.fee_amount === 'number' ? ev.fee_amount : 0), 0);
+      return {
+        kid,
+        summary: {
+          total_events: events.length,
+          active_events: events.filter((e) => e.status !== 'withdrawn').length,
+          awaiting_schedule_count: events.filter((e) => !e.draw_published && e.status !== 'withdrawn').length,
+          played_matches_count: events.filter((e) => e.is_played_match && e.status !== 'withdrawn').length,
+          withdrawn_count: events.filter((e) => e.status === 'withdrawn').length,
+          total_fees: Number(totalFees.toFixed(2)),
+          unread_alerts_count: alerts.filter((a) => !a.is_read).length
+        },
+        alerts, events, emails
+      };
+    }
+
+    function downloadIcs(data) {
+      const escIcs = (t) => String(t || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+      const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Courtline//V1//EN',`X-WR-CALNAME:${escIcs(data.kid.name + ' — Tournament Schedule')}`];
+      for (const ev of data.events) {
+        if (!ev.event_date) continue;
+        const isW = ev.status === 'withdrawn';
+        lines.push('BEGIN:VEVENT', `UID:courtline-${data.kid.slug}-${ev.id}@courtline.app`, `DTSTART;VALUE=DATE:${ev.event_date.replace(/-/g, '')}`, `SUMMARY:${escIcs((isW ? '[WITHDRAWN] ' : '') + ev.event_name)}`, ev.venue ? `LOCATION:${escIcs(ev.venue)}` : '', `STATUS:${isW ? 'CANCELLED' : 'CONFIRMED'}`, 'END:VEVENT');
+      }
+      lines.push('END:VCALENDAR');
+      const blob = new Blob([lines.filter(Boolean).join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `${data.kid.slug}-schedule.ics`; a.click();
+      URL.revokeObjectURL(url);
+      showToast(`Exported ${data.kid.slug}-schedule.ics`);
+    }
+
+    let store = createSeedStore();
+    const ui = { route: 'schedule', activeSlug: 'mia-yang', leagueFilter: 'all', showWithdrawals: true, expandedEvents: new Set(), inboxMode: 'fields', lastExtraction: null };
+    const appRoot = document.getElementById('app-root');
+
+    function setRoute(route, slug) {
+      ui.route = route;
+      if (slug) ui.activeSlug = slug;
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function render() {
+      document.getElementById('nav-landing').classList.toggle('is-active', ui.route === 'landing');
+      document.getElementById('nav-schedule').classList.toggle('is-active', ui.route === 'schedule');
+      document.getElementById('nav-inbox').classList.toggle('is-active', ui.route === 'inbox');
+      const miaData = getScheduleData('mia-yang');
+      const badge = document.getElementById('nav-alert-count');
+      if (miaData.summary.unread_alerts_count > 0) { badge.textContent = String(miaData.summary.unread_alerts_count); badge.hidden = false; }
+      else badge.hidden = true;
+
+      if (ui.route === 'landing') renderLanding();
+      else if (ui.route === 'inbox') renderInbox();
+      else renderSchedule();
+    }
+
+    function renderLanding() {
+      const kidChips = store.kids.map((k) => `<button type="button" class="kid-chip-link" data-open-kid="${esc(k.slug)}"><span>${esc(k.name)}</span><span class="mono" style="font-size:11.5px;color:var(--ink-muted)">${esc(k.division)}</span></button>`).join('');
+      appRoot.innerHTML = `
+        <section class="container">
+          <div class="hero-grid">
+            <div>
+              <p class="hero-kicker">Email is the integration · Weekend V1</p>
+              <h1 class="hero-title">Forward tournament emails. Get one schedule page per kid.</h1>
+              <p class="hero-subtitle">USTA confirmations, UTR team rosters, night-before venue moves, wet-court rain delays, and league receipts—all buried in different threads. Forward them to one address and get a single, shareable schedule page with automatic draw and time-change alerts.</p>
+              <div class="hero-actions">
+                <button type="button" class="btn btn-primary" id="cta-mia">Open Mia Yang’s Schedule</button>
+                <button type="button" class="btn btn-secondary" id="cta-inbox">Try Forward-an-Email Inbox</button>
+              </div>
+              <div class="hero-principles"><span>No accounts or passwords</span><span>No app to install</span><span>No scraping USTA or UTR logins</span></div>
+            </div>
+            <aside class="dispatch-card">
+              <div class="dispatch-top"><span class="dispatch-label">Forwarded Email → Live Alert</span><span class="dispatch-address">mia-yang@${INBOX_DOMAIN}</span></div>
+              <div class="dispatch-body">
+                <div class="dispatch-email-excerpt"><div class="dispatch-email-subject">Fwd: VENUE MOVE — Chance Through Sport Level 7</div><div>“Tomorrow’s Girls’ 12 &amp; under matches moved from West Valley College to Mission College Santa Clara. Format up to 4, no-ad. Check the USTA app for match time.”</div></div>
+                <div class="dispatch-arrow">LLM extracts &amp; diffs against earlier emails</div>
+                <div class="dispatch-extracted">
+                  <div class="dispatch-alert-head">Venue Changed Alert · Sat Night Before</div>
+                  <p class="dispatch-diff"><s>West Valley College</s> → <strong>Mission College Santa Clara</strong></p>
+                  <dl class="dispatch-fields">
+                    <div><dt>League &amp; Division</dt><dd>USTA · Girls’ 12 &amp; under</dd></div>
+                    <div><dt>Date &amp; Fee</dt><dd>Sun Nov 22, 2026 · $75.13</dd></div>
+                    <div><dt>Format</dt><dd>Up to 4, no-ad</dd></div>
+                    <div><dt>Match Time</dt><dd>USTA app only</dd></div>
+                  </dl>
+                </div>
+              </div>
+            </aside>
+          </div>
+          <div class="section-rule">
+            <h2 class="section-heading">How one forwarded email keeps the whole family synced</h2>
+            <div class="steps-grid">
+              <div class="step-item"><div class="step-num">01 / FORWARD</div><h3 class="step-title">Forward from Gmail or Apple Mail</h3><p class="step-desc">Each kid gets a dedicated forwarding address. Send confirmations, draw notices, venue changes, rain delays, or receipts straight there.</p></div>
+              <div class="step-item"><div class="step-num">02 / EXTRACT &amp; DIFF</div><h3 class="step-title">Structured fields + change detection</h3><p class="step-desc">Extracts event name, date, venue, division, fee, source league, format, and withdrawal status—then merges updates into existing events.</p></div>
+              <div class="step-item"><div class="step-num">03 / SCHEDULE &amp; ALERTS</div><h3 class="step-title">One clean page per kid</h3><p class="step-desc">Share one URL with co-parents, grandparents, or carpool drivers. Draws posted, time shifts, or venue moves surface at the top.</p></div>
+            </div>
+          </div>
+          <div class="create-kid-band">
+            <div>
+              <h2>Start a schedule page for another kid</h2>
+              <p>Zero signup required. Enter a name and division to generate a schedule page and forwarding inbox immediately.</p>
+              <div class="existing-kids-list"><span style="font-size:12.5px;color:var(--ink-muted)">Active pages:</span>${kidChips}</div>
+            </div>
+            <form id="create-kid-form" class="inline-kid-form">
+              <div class="field"><label for="new-kid-name">Kid’s name</label><input id="new-kid-name" class="input" required placeholder="e.g. Leo Chen" /></div>
+              <div class="field"><label for="new-kid-division">Division / Level</label><input id="new-kid-division" class="input" required placeholder="e.g. 12U Orange Ball" /></div>
+              <button type="submit" class="btn btn-primary">Create Page</button>
+            </form>
+          </div>
+        </section>`;
+      document.getElementById('cta-mia').addEventListener('click', () => setRoute('schedule', 'mia-yang'));
+      document.getElementById('cta-inbox').addEventListener('click', () => setRoute('inbox', 'mia-yang'));
+      document.querySelectorAll('[data-open-kid]').forEach((b) => b.addEventListener('click', () => setRoute('schedule', b.dataset.openKid)));
+      document.getElementById('create-kid-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('new-kid-name').value.trim();
+        const division = document.getElementById('new-kid-division').value.trim();
+        let slug = slugify(name), n = 2;
+        while (store.kids.some((k) => k.slug === slug)) slug = `${slugify(name)}-${n++}`;
+        const kid = { id: store.nextIds.kid++, slug, name, division, inbox_email: `${slug}@${INBOX_DOMAIN}`, created_at: new Date().toISOString() };
+        store.kids.push(kid);
+        showToast(`Created schedule page for ${kid.name}`);
+        setRoute('schedule', kid.slug);
+      });
+    }
+
+    function renderSchedule() {
+      const data = getScheduleData(ui.activeSlug);
+      const { kid, summary, alerts, events } = data;
+      const leagues = Array.from(new Set(events.map((e) => e.source_league).filter(Boolean)));
+      if (ui.leagueFilter !== 'all' && !leagues.includes(ui.leagueFilter)) ui.leagueFilter = 'all';
+      const filteredEvents = events.filter((ev) => (ui.showWithdrawals || ev.status !== 'withdrawn') && (ui.leagueFilter === 'all' || ev.source_league === ui.leagueFilter));
+      const unreadAlerts = alerts.filter((a) => !a.is_read);
+      const visibleAlerts = unreadAlerts.length ? unreadAlerts : alerts.slice(0, 3);
+
+      appRoot.innerHTML = `
+        <section class="container">
+          <header class="page-header">
+            <div>
+              <p class="page-eyebrow">Player Schedule · Unified Across Leagues</p>
+              <h1 class="page-title">${esc(kid.name)}</h1>
+              <div class="page-meta-row">
+                <span class="division-tag">${esc(kid.division)}</span>
+                <button type="button" class="inbox-copy-chip" id="btn-copy-inbox"><span>${esc(kid.inbox_email)}</span><span style="font-family:var(--font-sans);font-size:11px;opacity:0.75">Copy</span></button>
+                ${store.kids.length > 1 ? `<select id="kid-switcher" class="select" style="width:auto;padding:5px 10px;font-size:13px">${store.kids.map((k) => `<option value="${esc(k.slug)}" ${k.slug === kid.slug ? 'selected' : ''}>${esc(k.name)} (${esc(k.division)})</option>`).join('')}</select>` : ''}
+              </div>
+            </div>
+            <div class="page-actions">
+              <button type="button" class="btn btn-primary" id="btn-forward-email">Forward Email</button>
+              <button type="button" class="btn btn-secondary" id="btn-export-ics">Export .ics</button>
+              <button type="button" class="btn btn-secondary" id="btn-copy-share">Share Link</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="btn-reset-demo">Reset Demo</button>
+            </div>
+          </header>
+
+          <div class="summary-strip">
+            <div class="summary-cell"><div class="summary-label">Active Sessions</div><div class="summary-value">${summary.active_events}</div><div class="summary-sub">${summary.total_events} total tracked</div></div>
+            <div class="summary-cell"><div class="summary-label">Awaiting Draw</div><div class="summary-value">${summary.awaiting_schedule_count}</div><div class="summary-sub">Watching inbox for schedules</div></div>
+            <div class="summary-cell"><div class="summary-label">Played Matches</div><div class="summary-value">${summary.played_matches_count}</div><div class="summary-sub">${summary.withdrawn_count} withdrawal${summary.withdrawn_count === 1 ? '' : 's'} excluded</div></div>
+            <div class="summary-cell"><div class="summary-label">Fees Tracked</div><div class="summary-value">${formatMoney(summary.total_fees)}</div><div class="summary-sub">Across entries &amp; leagues</div></div>
+          </div>
+
+          ${alerts.length ? `
+            <section class="alerts-section">
+              <div class="alerts-header">
+                <h2 class="alerts-title">${unreadAlerts.length ? `${unreadAlerts.length} Active Alert${unreadAlerts.length === 1 ? '' : 's'} — Draws, Venue Moves & Time Changes` : 'Recent Schedule Alerts (All Read)'}</h2>
+                ${unreadAlerts.length ? `<button type="button" class="btn btn-ghost btn-sm" id="btn-mark-all-read">Mark all read</button>` : ''}
+              </div>
+              <div class="alerts-list">
+                ${visibleAlerts.map((al) => `
+                  <article class="alert-row ${al.is_read ? 'is-read' : ''}">
+                    <div>
+                      <h3 class="alert-heading"><span class="alert-type-pill alert-type-${esc(al.alert_type)}">${esc(alertTypeLabel(al.alert_type))}</span>${esc(al.title)}</h3>
+                      <p class="alert-msg">${esc(al.message)}</p>
+                      ${(al.previous_value || al.new_value) ? `<div class="alert-diff-line">${al.previous_value ? `<span class="diff-old">${esc(al.previous_value)}</span><span>→</span>` : ''}${al.new_value ? `<span class="diff-new">${esc(al.new_value)}</span>` : ''}<span style="color:var(--ink-muted)">· ${esc(formatTimestamp(al.created_at))}</span></div>` : ''}
+                    </div>
+                    <button type="button" class="btn btn-ghost btn-sm" data-dismiss-alert="${al.id}">${al.is_read ? 'Unread' : 'Dismiss'}</button>
+                  </article>`).join('')}
+              </div>
+            </section>` : ''}
+
+          <div class="schedule-toolbar">
+            <div class="filter-pills">
+              <button type="button" class="filter-pill ${ui.leagueFilter === 'all' ? 'is-active' : ''}" data-league="all">All Leagues (${events.length})</button>
+              ${leagues.map((lg) => `<button type="button" class="filter-pill ${ui.leagueFilter === lg ? 'is-active' : ''}" data-league="${esc(lg)}">${esc(lg)}</button>`).join('')}
+            </div>
+            <label class="toggle-label"><input type="checkbox" id="toggle-withdrawals" ${ui.showWithdrawals ? 'checked' : ''} /><span>Show withdrawals (${summary.withdrawn_count})</span></label>
+          </div>
+
+          <div class="events-stack">
+            ${filteredEvents.map((ev) => renderEventCard(ev, kid)).join('')}
+          </div>
+        </section>`;
+
+      document.getElementById('btn-copy-inbox').addEventListener('click', () => copyText(kid.inbox_email, 'Forwarding address copied'));
+      document.getElementById('btn-forward-email').addEventListener('click', () => setRoute('inbox', kid.slug));
+      document.getElementById('btn-export-ics').addEventListener('click', () => downloadIcs(data));
+      document.getElementById('btn-copy-share').addEventListener('click', () => copyText(window.location.href, 'Schedule link copied'));
+      document.getElementById('kid-switcher')?.addEventListener('change', (e) => setRoute('schedule', e.target.value));
+      document.getElementById('btn-reset-demo').addEventListener('click', () => { store = createSeedStore(); ui.lastExtraction = null; ui.activeSlug = 'mia-yang'; ui.leagueFilter = 'all'; showToast('Reset to Mia Yang’s seeded schedule'); render(); });
+      document.getElementById('btn-mark-all-read')?.addEventListener('click', () => { store.alerts.filter((a) => a.kid_id === kid.id).forEach((a) => { a.is_read = true; }); render(); });
+      document.querySelectorAll('[data-dismiss-alert]').forEach((b) => b.addEventListener('click', () => { const a = store.alerts.find((x) => x.id === Number(b.dataset.dismissAlert)); if (a) a.is_read = !a.is_read; render(); }));
+      document.querySelectorAll('[data-league]').forEach((b) => b.addEventListener('click', () => { ui.leagueFilter = b.dataset.league; render(); }));
+      document.getElementById('toggle-withdrawals').addEventListener('change', (e) => { ui.showWithdrawals = e.target.checked; render(); });
+      document.querySelectorAll('[data-toggle-event]').forEach((b) => b.addEventListener('click', () => { const id = Number(b.dataset.toggleEvent); ui.expandedEvents.has(id) ? ui.expandedEvents.delete(id) : ui.expandedEvents.add(id); render(); }));
+      document.querySelectorAll('[data-go-inbox]').forEach((b) => b.addEventListener('click', () => setRoute('inbox', kid.slug)));
+    }
+
+    function renderEventCard(ev, kid) {
+      const isW = ev.status === 'withdrawn', isExp = ui.expandedEvents.has(ev.id);
+      const playingUp = ev.division && /12\s*&|12u/i.test(ev.division) && /10/i.test(kid.division);
+      const latestNote = ev.schedule_notes?.length ? ev.schedule_notes[ev.schedule_notes.length - 1] : null;
+      let callout = '';
+      if (isW) callout = `<div class="event-callout callout-withdrawn"><span><strong>Withdrawal (not a played match):</strong> ${esc(ev.withdrawal_reason || 'Withdrew prior to play.')}</span></div>`;
+      else if (!ev.draw_published) callout = `<div class="event-callout callout-pending"><span><strong>Schedule pending:</strong> ${esc(ev.match_time_note || 'No match schedule published yet.')} Forward the draw email when it arrives.</span><button type="button" data-go-inbox class="btn btn-ghost btn-sm" style="color:inherit;text-decoration:underline">Forward draw email</button></div>`;
+      else if (ev.status === 'draw_posted') callout = `<div class="event-callout callout-draw"><span><strong>Draw published:</strong> ${esc([ev.date_label, ev.match_time, ev.venue].filter(Boolean).join(' · '))}</span></div>`;
+
+      return `
+        <article class="event-card ${isW ? 'is-withdrawn' : ''}">
+          <div class="event-card-top">
+            <div><div class="event-league">${esc(ev.source_league)}</div><h2 class="event-title">${esc(ev.event_name)}</h2></div>
+            <span class="status-badge status-${esc(ev.status)}">${esc(statusLabel(ev.status))}</span>
+          </div>
+          ${callout}
+          <div class="facts-grid">
+            <div><div class="fact-label">Date / Session</div><div class="fact-value ${ev.date_label ? '' : 'is-muted'}">${esc(ev.date_label || ev.event_date || 'Date TBD')}</div></div>
+            <div><div class="fact-label">Match Time / Draw</div><div class="fact-value ${ev.match_time ? '' : 'is-muted'}">${esc(ev.match_time || (ev.draw_published ? 'See league app' : 'Not published yet'))}</div>${ev.match_time_note ? `<div class="fact-sub ${/usta app/i.test(ev.match_time_note) ? 'is-app-note' : ''}">${esc(ev.match_time_note)}</div>` : ''}</div>
+            <div><div class="fact-label">Venue</div><div class="fact-value ${ev.venue ? '' : 'is-muted'}">${esc(ev.venue || 'TBD')}</div>${ev.previous_venue ? `<div class="fact-sub is-change">${esc(ev.venue_note || `Moved from ${ev.previous_venue}`)}</div>` : ''}</div>
+            <div><div class="fact-label">Division</div><div class="fact-value">${esc(ev.division || '—')}</div>${playingUp ? `<div class="fact-sub">Playing up from ${esc(kid.division)}</div>` : ''}</div>
+            <div><div class="fact-label">Entry / Fee</div><div class="fact-value mono ${ev.fee_amount != null ? '' : 'is-muted'}" style="font-size:13.5px">${esc(ev.fee_label || (ev.fee_amount != null ? formatMoney(ev.fee_amount) : 'Not listed in email'))}</div></div>
+            <div><div class="fact-label">${ev.format ? 'Format' : ev.deadline_label ? 'Deadline' : 'Format / Deadline'}</div><div class="fact-value ${ev.format || ev.deadline_label ? '' : 'is-muted'}">${esc(ev.format || ev.deadline_label || 'Standard / TBD')}</div>${ev.format && ev.deadline_label ? `<div class="fact-sub is-change">Deadline: ${esc(ev.deadline_label)}</div>` : ''}</div>
+          </div>
+          <div class="event-footer">
+            <p class="event-latest-note">${latestNote ? `<strong>Latest update:</strong> ${esc(latestNote.text)}` : 'Extracted from forwarded email.'}</p>
+            <button type="button" class="btn btn-ghost btn-sm" data-toggle-event="${ev.id}">${isExp ? 'Hide timeline & emails' : `${ev.emails.length} forwarded email${ev.emails.length === 1 ? '' : 's'} · View trail`}</button>
+          </div>
+          ${isExp ? `
+            <div class="event-drawer">
+              <div class="fact-label" style="margin-bottom:8px">Chronological Email Timeline</div>
+              <ul class="timeline-list">${ev.schedule_notes.map((n) => `<li class="timeline-item"><span class="timeline-date">${esc(formatTimestamp(n.at))}</span><span>${esc(n.text)}</span></li>`).join('')}</ul>
+              <div class="fact-label" style="margin-bottom:6px">Source Forwarded Emails</div>
+              ${ev.emails.map((em) => `<div class="source-email-item"><div class="source-email-meta">${esc(em.from_address)} · ${esc(formatTimestamp(em.received_at))} · <span class="mono">${esc(em.extraction_provider)}</span></div><div class="source-email-subject">${esc(em.subject)}</div><pre class="source-email-body">${esc(em.body)}</pre></div>`).join('')}
+            </div>` : ''}
+        </article>`;
+    }
+
+    function renderInbox() {
+      const data = getScheduleData(ui.activeSlug);
+      const { kid, emails } = data;
+      appRoot.innerHTML = `
+        <section class="container">
+          <header class="page-header">
+            <div>
+              <p class="page-eyebrow">Forward-an-Email Inbox</p>
+              <h1 class="page-title">Send tournament emails for ${esc(kid.name)}</h1>
+              <div class="page-meta-row"><span>Click a one-click sample email or paste your own to test extraction &amp; draw/time-change alerts.</span></div>
+            </div>
+            <div class="page-actions"><button type="button" class="btn btn-secondary" id="btn-back-sched">View ${esc(kid.name)}’s Schedule →</button></div>
+          </header>
+
+          <div class="inbox-layout">
+            <div class="panel">
+              <h2 class="panel-title">Forward or Paste an Email</h2>
+              <p class="panel-sub">Extracts event name, date, venue, division, fee, source league, format, deadline, and withdrawal status.</p>
+              <div class="forward-address-box">
+                <div><div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--pine)">Kid’s Forwarding Address</div><div class="forward-address-value">${esc(kid.inbox_email)}</div></div>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-addr">Copy Address</button>
+              </div>
+              <div class="fact-label" style="margin-bottom:8px">One-click realistic test emails (click to fill)</div>
+              <div class="sample-grid">${SAMPLE_FORWARD_EMAILS.map((s) => `<button type="button" class="sample-btn" data-sample="${esc(s.id)}"><span class="sample-btn-title">${esc(s.label)}</span><span class="sample-btn-desc">${esc(s.description)}</span></button>`).join('')}</div>
+              <div class="mode-tabs">
+                <button type="button" class="mode-tab ${ui.inboxMode === 'fields' ? 'is-active' : ''}" data-mode="fields">Email Fields</button>
+                <button type="button" class="mode-tab ${ui.inboxMode === 'eml' ? 'is-active' : ''}" data-mode="eml">Raw .eml Paste</button>
+              </div>
+              <form id="forward-form" class="form-stack">
+                ${ui.inboxMode === 'fields' ? `
+                  <div class="form-row-2">
+                    <div class="field"><label for="email-from">From</label><input id="email-from" class="input" required value="notifications@universaltennis.com" /></div>
+                    <div class="field"><label for="email-subject">Subject</label><input id="email-subject" class="input" required placeholder="Fwd: Draw Posted — UTR Sunny Youngs" /></div>
+                  </div>
+                  <div class="field"><label for="email-body">Forwarded Email Body</label><textarea id="email-body" class="textarea" required placeholder="Paste a USTA, UTR, or team league email here..."></textarea></div>` : `
+                  <div class="field"><label for="email-raw-eml">Raw .eml Source</label><textarea id="email-raw-eml" class="textarea mono" style="font-size:12.5px" required placeholder="From: director@tournament.org&#10;Subject: Fwd: Time Change&#10;&#10;Match moved from 10:30 AM to 1:15 PM..."></textarea></div>`}
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                  <span style="font-size:12.5px;color:var(--ink-muted)">Mode: <span class="mono">client-demo (Node server adds Claude/GPT/Gemini)</span></span>
+                  <button type="submit" class="btn btn-primary">Extract &amp; Update Schedule</button>
+                </div>
+              </form>
+              ${ui.lastExtraction ? `
+                <div class="extraction-result">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+                    <strong style="color:var(--pine)">${ui.lastExtraction.action === 'created' ? 'New event added' : 'Matched & updated'}: ${esc(ui.lastExtraction.event.event_name)}</strong>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-see-sched">See on Schedule →</button>
+                  </div>
+                  ${ui.lastExtraction.alerts.map((a) => `<div style="font-size:13px;color:var(--clay);margin-top:4px"><strong>Alert (${esc(alertTypeLabel(a.alert_type))}):</strong> ${esc(a.title)} — ${esc(a.message)}</div>`).join('')}
+                  <pre class="json-preview">${esc(JSON.stringify(ui.lastExtraction.extracted, null, 2))}</pre>
+                </div>` : ''}
+            </div>
+
+            <aside class="panel">
+              <h2 class="panel-title">Received Emails (${emails.length})</h2>
+              <p class="panel-sub">Click any email to inspect its raw text and extracted JSON.</p>
+              ${emails.map((em) => `
+                <details class="history-item">
+                  <summary>
+                    <div class="history-top"><span class="history-subject">${esc(em.subject)}</span><span class="history-date">${esc(formatTimestamp(em.received_at))}</span></div>
+                    <div class="history-from">${esc(em.from_address)} · <span class="mono">${esc(em.extraction_provider)}</span></div>
+                  </summary>
+                  <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+                    <pre class="source-email-body">${esc(em.body)}</pre>
+                    <pre class="json-preview">${esc(JSON.stringify(em.extracted, null, 2))}</pre>
+                  </div>
+                </details>`).join('')}
+            </aside>
+          </div>
+        </section>`;
+
+      document.getElementById('btn-back-sched').addEventListener('click', () => setRoute('schedule', kid.slug));
+      document.getElementById('btn-see-sched')?.addEventListener('click', () => setRoute('schedule', kid.slug));
+      document.getElementById('btn-copy-addr').addEventListener('click', () => copyText(kid.inbox_email, 'Forwarding address copied'));
+      document.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => { ui.inboxMode = b.dataset.mode; render(); }));
+      document.querySelectorAll('[data-sample]').forEach((b) => b.addEventListener('click', () => {
+        const s = SAMPLE_FORWARD_EMAILS.find((x) => x.id === b.dataset.sample);
+        if (!s) return;
+        if (ui.inboxMode !== 'fields') { ui.inboxMode = 'fields'; render(); }
+        document.getElementById('email-from').value = s.from_address;
+        document.getElementById('email-subject').value = s.subject;
+        document.getElementById('email-body').value = s.body;
+        showToast(`Loaded: ${s.label}`);
+      }));
+      document.getElementById('forward-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const emailInput = ui.inboxMode === 'eml'
+          ? parseRawEml(document.getElementById('email-raw-eml').value)
+          : { from_address: document.getElementById('email-from').value, subject: document.getElementById('email-subject').value, body: document.getElementById('email-body').value, received_at: new Date().toISOString() };
+        const res = ingestIntoStore(store, kid, emailInput);
+        ui.lastExtraction = res;
+        showToast(res.alerts.length ? `Schedule updated · ${res.alerts.length} alert${res.alerts.length === 1 ? '' : 's'} triggered` : `Schedule ${res.action}: ${res.event.event_name}`);
+        render();
+      });
+    }
+
+    document.getElementById('nav-brand').addEventListener('click', () => setRoute('landing'));
+    document.getElementById('nav-landing').addEventListener('click', () => setRoute('landing'));
+    document.getElementById('nav-schedule').addEventListener('click', () => setRoute('schedule', ui.activeSlug));
+    document.getElementById('nav-inbox').addEventListener('click', () => setRoute('inbox', ui.activeSlug));
+    render();
+  </script>
+</body>
+</html>
